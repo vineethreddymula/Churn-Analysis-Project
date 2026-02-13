@@ -1,0 +1,80 @@
+# =========================================
+# Sales Performance Analysis
+# =========================================
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# -----------------------------------------
+# 1. Load Dataset
+# -----------------------------------------
+
+df = pd.read_csv("sales_data.csv")
+
+# -----------------------------------------
+# 2. Data Cleaning
+# -----------------------------------------
+
+df["OrderDate"] = pd.to_datetime(df["OrderDate"])
+df = df.drop_duplicates()
+
+# -----------------------------------------
+# 3. Key Metrics
+# -----------------------------------------
+
+total_sales = df["Sales"].sum()
+total_profit = df["Profit"].sum()
+
+print(f"Total Sales: ${total_sales:,.2f}")
+print(f"Total Profit: ${total_profit:,.2f}")
+
+# -----------------------------------------
+# 4. Sales by Region
+# -----------------------------------------
+
+region_sales = df.groupby("Region")["Sales"].sum()
+
+plt.figure()
+region_sales.plot(kind="bar")
+plt.title("Sales by Region")
+plt.xlabel("Region")
+plt.ylabel("Sales")
+plt.xticks(rotation=45)
+plt.show()
+
+# -----------------------------------------
+# 5. Profit by Category
+# -----------------------------------------
+
+category_profit = df.groupby("Category")["Profit"].sum()
+
+plt.figure()
+category_profit.plot(kind="bar")
+plt.title("Profit by Category")
+plt.xlabel("Category")
+plt.ylabel("Profit")
+plt.xticks(rotation=45)
+plt.show()
+
+# -----------------------------------------
+# 6. Monthly Revenue Trend
+# -----------------------------------------
+
+df["Month"] = df["OrderDate"].dt.to_period("M")
+monthly_sales = df.groupby("Month")["Sales"].sum()
+
+plt.figure()
+monthly_sales.plot()
+plt.title("Monthly Sales Trend")
+plt.xlabel("Month")
+plt.ylabel("Sales")
+plt.xticks(rotation=45)
+plt.show()
+
+# -----------------------------------------
+# 7. Loss-Making Products
+# -----------------------------------------
+
+loss_products = df[df["Profit"] < 0]
+print("\nLoss-Making Products:")
+print(loss_products[["SubCategory", "Profit"]])
